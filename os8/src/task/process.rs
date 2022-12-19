@@ -73,7 +73,7 @@ impl ProcessControlBlockInner {
 
     pub fn deadlock_detect(&self) -> isize {
         if !self.enable_deadlock_detect {
-            0
+            return 0;
         }
         let mut mutex_work = self.mutex_avaliable.clone();
         let mut semaphore_work = self.semaphore_avaliable.clone();
