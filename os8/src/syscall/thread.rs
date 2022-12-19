@@ -4,6 +4,7 @@ use crate::{
     trap::{trap_handler, TrapContext},
 };
 use alloc::sync::Arc;
+use alloc::vec;
 
 pub fn sys_thread_create(entry: usize, arg: usize) -> isize {
     let task = current_task().unwrap();
@@ -32,6 +33,12 @@ pub fn sys_thread_create(entry: usize, arg: usize) -> isize {
     (*new_task_trap_cx).x[10] = arg;
 
     let mut process_inner = process.inner_exclusive_access();
+    let mln = process_inner.mutex_list.len(); 
+    let sln  = process_inner.semaphore_list.len();
+    process_inner.mutex_need.push(vec![0; mln]);
+    process_inner.mutex_allocation.push(vec![0; mln]);
+    process_inner.semaphore_need.push(vec![0; sln]);
+    process_inner.semaphore_allocation.push(vec![0; sln]);
     // add new thread to current process
     let tasks = &mut process_inner.tasks;
     while tasks.len() < new_task_tid + 1 {
